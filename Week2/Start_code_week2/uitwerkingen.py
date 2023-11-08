@@ -32,7 +32,7 @@ def draw_graph(data):
 
     plt.show()
     draw_graph(data)   
-
+    # Het draaien van de data zorgt ervoor dat de juiste gegevens op de juiste plaatsen in de scatterplot verschijnen, waardoor het gemakkelijker     is om te begrijpen.
 
 
 def compute_cost(X, y, theta):
@@ -102,6 +102,7 @@ def gradient_descent(X, y, theta, alpha, num_iters):
 
     # aan het eind van deze loop retourneren we de nieuwe waarde van theta
     # (wat is de dimensionaliteit van theta op dit moment?).
+    # De dimensionaliteit van `theta` op dit moment is gelijk aan het aantal kenmerken in de dataset.
 
     return theta, costs
 

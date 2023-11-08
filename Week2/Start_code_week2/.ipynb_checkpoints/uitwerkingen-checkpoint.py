@@ -20,8 +20,19 @@ def draw_graph(data):
     # Maak gebruik van pytplot.scatter om dit voor elkaar te krijgen.
 
     #YOUR CODE HERE
-    pass
+    data = np.array(data).T
 
+    x, y = data[0], data[1]
+
+    plt.scatter(x, y, marker='x', color='r', label='Data Points')
+
+    plt.xlabel("Populatie (10K personen)")
+    plt.ylabel("Winst (10K$)")
+    plt.title("Scatter Plot")
+
+    plt.show()
+    draw_graph(data)   
+    # Het draaien van de data zorgt ervoor dat de juiste gegevens op de juiste plaatsen in de scatterplot verschijnen, waardoor het gemakkelijker     is om te begrijpen.
 
 
 def compute_cost(X, y, theta):
@@ -47,6 +58,10 @@ def compute_cost(X, y, theta):
     J = 0
 
     # YOUR CODE HERE
+    m = len(y)
+    voorspelling = np.dot(X, theta)
+    squared_error = np.square(voorspelling - y)
+    J = (1 / (2 * m)) * np.sum(squared_error)
 
     return J
 
@@ -74,9 +89,20 @@ def gradient_descent(X, y, theta, alpha, num_iters):
     costs = []
 
     # YOUR CODE HERE
+    for i in range(num_iters):
+
+        predictions = X.dot(theta)
+        error = predictions - y
+
+        gradient = (1 / m) * X.T.dot(error)
+        theta -= alpha * gradient
+
+        cost = compute_cost(X, y, theta)
+        costs.append(cost)
 
     # aan het eind van deze loop retourneren we de nieuwe waarde van theta
     # (wat is de dimensionaliteit van theta op dit moment?).
+    # De dimensionaliteit van `theta` op dit moment is gelijk aan het aantal kenmerken in de dataset.
 
     return theta, costs
 
@@ -84,7 +110,14 @@ def gradient_descent(X, y, theta, alpha, num_iters):
 def draw_costs(data): 
     # OPGAVE 3b
     # YOUR CODE HERE
-    pass
+    plt.figure(figsize=(8, 6))
+    plt.plot(range(len(data)), data, linestyle='-', color='b')
+    plt.xlabel('Iterations')
+    plt.ylabel('Cost')
+    plt.title('Cost vs. Iterations')
+    plt.grid(True)
+    plt.show()
+
 
 def contour_plot(X, y):
     #OPGAVE 4
@@ -95,25 +128,27 @@ def contour_plot(X, y):
     # Je moet hiervoor door de waarden van t1 en t2 itereren, en deze waarden in een ndarray
     # zetten. Deze ndarray kun je vervolgens meesturen aan de functie computeCost. Bedenk of je nog een
     # transformatie moet toepassen of niet. Let op: je moet computeCost zelf *niet* aanpassen.
-
+    
     fig = plt.figure()
-    ax = fig.gca(projection = '3d')
+    ax = fig.add_subplot(projection='3d')
     jet = plt.get_cmap('jet')
 
     t1 = np.linspace(-10, 10, 100)
     t2 = np.linspace(-1, 4, 100)
     T1, T2 = np.meshgrid(t1, t2)
 
-    J_vals = np.zeros( (len(t2), len(t2)) )
+    J_vals = np.zeros((len(t2), len(t1)))
 
-    #YOUR CODE HERE 
+    for i in range(len(t1)):
+        for j in range(len(t2)):
+            current_theta = np.array([t1[i], t2[j]])
+            J_vals[j, i] = compute_cost(X, y, current_theta)
 
-    surf = ax.plot_surface(T1, T2, J_vals, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+    surf = ax.plot_surface(T1, T2, J_vals, cmap=jet, linewidth=0, antialiased=False)
 
-    xLabel = ax.set_xlabel(r'$\theta_0$', linespacing=3.2)
-    yLabel = ax.set_ylabel(r'$\theta_1$', linespacing=3.1)
-    zLabel = ax.set_zlabel(r'$J(\theta_0, \theta_1)$', linespacing=3.4)
-
-    ax.dist = 10
+    ax.set_xlabel(r'$\theta_0$')
+    ax.set_ylabel(r'$\theta_1$')
+    ax.set_zlabel(r'$J(\theta_0, \theta_1)$')
+    ax.set_title(r'3D Surface Plot of $J(\theta_0, \theta_1)$')
 
     plt.show()
